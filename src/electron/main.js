@@ -3,11 +3,11 @@ import { app, BrowserWindow, dialog, Menu } from "electron"
 import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url"
-import isDev from "electron-is-dev"
 import { ipcMain } from "electron"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
+const isDev = process.env.NODE_ENV === "development"
 
 let currentFilePath = null
 
