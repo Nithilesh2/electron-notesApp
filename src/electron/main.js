@@ -1,35 +1,39 @@
 /* eslint-disable no-undef */
-import { app, BrowserWindow, dialog, Menu } from "electron"
+import { app, BrowserWindow, dialog, Menu, ipcMain } from "electron"
 import path from "path"
 import fs from "fs"
 import { fileURLToPath } from "url"
-import { ipcMain } from "electron"
+import isDev from "electron-is-dev"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const isDev = process.env.NODE_ENV === "development"
+// const isDev = process.env.NODE_ENV === "development"
 
 let currentFilePath = null
+let win = null
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     title: "My Notes",
     icon: path.join(app.getAppPath(), "src/assets", "notesappIcon.png"),
     minWidth: 500,
     minHeight: 400,
-    frame: true,
+    frame: false,
     transparent: true,
+    roundedCorners:true,
     hasShadow: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true,
       enableRemoteModule: false,
     },
     opacity: 0.95,
   })
+
+  win.webContents.openDevTools()
 
   Menu.setApplicationMenu(null)
 
@@ -173,6 +177,9 @@ const createWindow = () => {
 
   const menu = Menu.buildFromTemplate(menuTemplate)
   Menu.setApplicationMenu(menu)
+  win.on("closed", () => {
+    win = null
+  })
 }
 
 app.whenReady().then(() => {
@@ -203,3 +210,26 @@ ipcMain.on("save-file-content", (event, { filePath, content }) => {
     console.log("File saved successfully:", filePath)
   })
 })
+
+ipcMain.on("close-window", () => {
+  if (win) {
+    win.close();
+  }
+});
+
+ipcMain.on("minimize-window", () => {
+  if (win) {
+    win.minimize();
+  }
+});
+
+ipcMain.on("maximize-window", () => {
+  if (win) {
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  }
+});
+

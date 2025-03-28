@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react"
 import styles from "./App.module.css"
 import "papercss/dist/paper.min.css"
+import Frame from "./components/Frame/Frame"
 
 const App = () => {
   const [fileContent, setFileContent] = useState("")
@@ -49,15 +50,18 @@ const App = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.left}>
-          <h5>{filePath}</h5>
-        </div>
-        <div className={styles.right}>
-          <textarea
-            className={styles.textArea}
-            value={fileContent}
-            onChange={(eve) => setFileContent(eve.target.value)}
-          />
+        <Frame />
+        <div className={styles.main}>
+          <div className={styles.left}>
+            <h5>{filePath}</h5>
+          </div>
+          <div className={styles.right}>
+            <textarea
+              className={styles.textArea}
+              value={fileContent}
+              onChange={(eve) => setFileContent(eve.target.value)}
+            />
+          </div>
         </div>
       </div>
     </>
